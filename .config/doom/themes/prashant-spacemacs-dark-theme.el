@@ -55,8 +55,8 @@ Can be an integer to determine the exact padding."
   ;; The Spacemacs dark palette, mapped into Doom's base0-base8 ramp.
   ;; bg1 (#292b2e) is the main background.
   ;; base (#b2b2b2) is the main foreground text.
-  ((bg         '("#212026" "#1c1c1c" "black"        ))
-   (bg-alt     '("#292b2e" "#262626" "black"        ))
+  ((bg         '("#292b2e" "#262626" "black"        ))
+   (bg-alt     '("#212026" "#1c1c1c" "black"        ))
    (base0      '("#0a0814" "#080808" "black"        ))  ;; bg4 – deepest dark
    (base1      '("#100a14" "#121212" "brightblack"  ))  ;; bg3
    (base2      '("#212026" "#1c1c1c" "brightblack"  ))  ;; bg2
@@ -129,7 +129,7 @@ Can be an integer to determine the exact padding."
 
    ;; face categories -- required for all themes
    ;; Every face-category must resolve to a unique color.
-   (highlight      '("#444155" "#444444" "brightblack" ))
+   (highlight      '("#ABC155" "#ABC444" "brightblack" ))
    (vertical-bar   border)
    (selection      '("#444155" "#444444" "brightblack" ))
    (builtin        comp)                                   ;; #c56ec3 — spacemacs comp purple
@@ -144,7 +144,7 @@ Can be an integer to determine the exact padding."
    (strings        (doom-lighten str 0.15))               ;; lightened #2d9574, distinct from teal
    (variables      violet)                                 ;; #7590db
    (numbers        magenta)                                ;; #a31db1
-   (region         highlight)
+   (region         selection)
    (error          err)
    (warning        war)
    (success        suc)
@@ -182,10 +182,10 @@ Can be an integer to determine the exact padding."
    (cursor :background "#e3dedd")
    (hl-line :background base2 :extend t)
    (solaire-hl-line-face :inherit 'hl-line :background base3 :extend t)
-   (highlight :background highlight :foreground base8)
+   (highlight :background base4 :foreground highlight)
    (lazy-highlight :background green-bg-s)
    (isearch :foreground bg :background mat)
-   (match :background highlight :foreground mat)
+   (match :background mat :foreground base3)
 
    ((line-number &override) :foreground lnum :background base2)
    ((line-number-current-line &override) :foreground base8 :background base2)
@@ -225,7 +225,7 @@ Can be an integer to determine the exact padding."
     :box (if -modeline-pad `(:line-width ,-modeline-pad :color ,modeline-bg-inactive)))
    (mode-line-emphasis :foreground (if -modeline-bright base8 highlight))
    (mode-line-buffer-id :foreground func-color :inherit 'bold)
-   (mode-line-highlight :foreground highlight)
+   (mode-line-highlight :foreground base2 :background highlight)
 
    ;;; Doom Modeline
    (doom-modeline-bar :background (if -modeline-bright modeline-bg blue))
@@ -240,7 +240,7 @@ Can be an integer to determine the exact padding."
    (whitespace-tab :background bg)
 
    ;;; Ivy
-   (ivy-current-match :background highlight :inherit 'bold :extend t)
+   (ivy-current-match :background selection :inherit 'bold :extend t)
    (ivy-minibuffer-match-face-1 :inherit 'bold)
    (ivy-minibuffer-match-face-2 :foreground head1 :underline t)
    (ivy-minibuffer-match-face-3 :foreground head4 :underline t)
@@ -249,7 +249,7 @@ Can be an integer to determine the exact padding."
    (ivy-posframe :background base1)
 
    ;;; Vertico
-   (vertico-current :background highlight :foreground base8 :bold t)
+   (vertico-current :background selection :foreground base8 :bold t)
    (vertico-group-title :background head1-bg :foreground head1 :bold t)
    (vertico-group-separator :background head1-bg :foreground head1 :strike-through t)
    (vertico-posframe-border :background border)

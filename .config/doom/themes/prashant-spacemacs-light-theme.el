@@ -59,32 +59,32 @@ Can be an integer to determine the exact padding."
   ;; base (#655370) is the main foreground text.
   ((bg         '("#fbf8ef" "#ffffff" "white"        ))
    (bg-alt     '("#efeae9" "#e4e4e4" "white"        ))
-   (base0      '("#fbf8ef" "#ffffff" "white"        ))  ;; bg1 (lightest)
-   (base1      '("#efeae9" "#e4e4e4" "brightwhite"  ))  ;; bg2
-   (base2      '("#e3dedd" "#d0d0d0" "brightwhite"  ))  ;; bg3
-   (base3      '("#d2ceda" "#bcbcbc" "brightwhite"  ))  ;; bg4
-   (base4      '("#b3b9be" "#b3b9be" "brightblack"  ))  ;; border
-   (base5      '("#a094a2" "#afafd7" "brightblack"  ))  ;; base-dim
-   (base6      '("#8c799f" "#5f5f87" "brightblack"  ))  ;; ttip
-   (base7      '("#655370" "#5f5f87" "brightblack"  ))  ;; main fg (base)
-   (base8      '("#100a14" "#121212" "black"        ))  ;; bg3 dark
-   (fg-alt     '("#a094a2" "#afafd7" "brightblack"  ))  ;; base-dim
-   (fg         '("#655370" "#5f5f87" "black"        ))  ;; base
+   (base0      '("#fbf8ef" "#ffffff" "white"        )) ;; bg1 (lightest)
+   (base1      '("#efeae9" "#e4e4e4" "brightwhite"  )) ;; bg2
+   (base2      '("#e3dedd" "#d0d0d0" "brightwhite"  )) ;; bg3
+   (base3      '("#d2ceda" "#bcbcbc" "brightwhite"  )) ;; bg4
+   (base4      '("#b3b9be" "#b3b9be" "brightblack"  )) ;; border
+   (base5      '("#a094a2" "#afafd7" "brightblack"  )) ;; base-dim
+   (base6      '("#8c799f" "#5f5f87" "brightblack"  )) ;; ttip
+   (base7      '("#655370" "#5f5f87" "brightblack"  )) ;; main fg (base)
+   (base8      '("#100a14" "#121212" "black"        )) ;; bg3 dark
+   (fg-alt     '("#a094a2" "#afafd7" "brightblack"  )) ;; base-dim
+   (fg         '("#655370" "#5f5f87" "black"        )) ;; base
 
    (grey       base5)
 
    ;; Spacemacs light accent colors
    (red        '("#f2241f" "#d70008" "red"          ))
-   (orange     '("#dc752f" "#dc752f" "brightred"    ))  ;; war
+   (orange     '("#dc752f" "#dc752f" "brightred"    )) ;; war
    (green      '("#67b11d" "#5faf00" "green"        ))
-   (teal       '("#2d9574" "#2aa198" "brightgreen"  ))  ;; str / aqua
+   (teal       '("#2d9574" "#2aa198" "brightgreen"  )) ;; str / aqua
    (yellow     '("#b1951d" "#875f00" "yellow"       ))
-   (blue       '("#3a81c3" "#268bd2" "brightblue"   ))  ;; keyword / head1
-   (dark-blue  '("#edf1ed" "#d7d7ff" "blue"         ))  ;; blue-bg
+   (blue       '("#3a81c3" "#268bd2" "brightblue"   )) ;; keyword / head1
+   (dark-blue  '("#edf1ed" "#d7d7ff" "blue"         )) ;; blue-bg
    (magenta    '("#a31db1" "#800080" "magenta"      ))
-   (violet     '("#715ab1" "#af5fd7" "brightmagenta"))  ;; var
+   (violet     '("#715ab1" "#af5fd7" "brightmagenta")) ;; var
    (cyan       '("#21b8c7" "#008080" "brightcyan"   ))
-   (dark-cyan  '("#20786b" "#2aa198" "cyan"         ))  ;; aqua (darkened teal)
+   (dark-cyan  '("#20786b" "#2aa198" "cyan"         )) ;; aqua (darkened teal)
 
    ;; Extended Spacemacs light palette
    (act1          '("#e7e5eb"))
@@ -129,29 +129,30 @@ Can be an integer to determine the exact padding."
    (blue-bg       '("#edf1ed"))
    (blue-bg-s     '("#d1dcdf"))
    (yellow-bg     '("#f6f1e1"))
+   (highlight-fg  '("#ba9155"))
 
    ;; face categories -- required for all themes
    ;; Every face-category must resolve to a unique color.
-   (highlight      '("#d3d3e7" "#d7d7ff" "brightwhite" ))
+   (highlight      highlight-fg)
    (vertical-bar   border)
    (selection      '("#d3d3e7" "#d7d7ff" "brightwhite" ))
-   (builtin        comp)                                   ;; #6c4173 — spacemacs comp purple
+   (builtin        comp) ;; #6c4173 — spacemacs comp purple
    (comments       (if prashant-spacemacs-light-brighter-comments comment comment-light))
    (doc-comments   meta)
-   (constants      const)                                  ;; #4e3163
-   (functions      func-color)                             ;; #6c3163
-   (keywords       blue)                                   ;; #3a81c3
-   (methods        teal)                                   ;; #2d9574
-   (operators      orange)                                 ;; #dc752f
-   (type           type-color)                             ;; #ba2f59
-   (strings        (doom-darken str 0.12))                 ;; darkened #2d9574, distinct from teal
-   (variables      violet)                                 ;; #715ab1
-   (numbers        magenta)                                ;; #a31db1
-   (region         highlight)
+   (constants      const)                  ;; #4e3163
+   (functions      func-color)             ;; #6c3163
+   (keywords       blue)                   ;; #3a81c3
+   (methods        teal)                   ;; #2d9574
+   (operators      orange)                 ;; #dc752f
+   (type           type-color)             ;; #ba2f59
+   (strings        (doom-darken str 0.12)) ;; darkened #2d9574, distinct from teal
+   (variables      violet)                 ;; #715ab1
+   (numbers        magenta)                ;; #a31db1
+   (region         selection)
    (error          err)
    (warning        war)
    (success        suc)
-   (vc-modified    '("#4a6fa5" "#5f87af" "blue"))          ;; shifted blue, distinct from keyword
+   (vc-modified    '("#4a6fa5" "#5f87af" "blue")) ;; shifted blue, distinct from keyword
    (vc-added       green)
    (vc-deleted     red)
 
@@ -185,10 +186,10 @@ Can be an integer to determine the exact padding."
    (cursor :background "#100a14")
    (hl-line :background base1 :extend t)
    (solaire-hl-line-face :inherit 'hl-line :background base0 :extend t)
-   (highlight :background highlight :foreground fg)
+   (highlight :background (doom-lighten highlight 0.5) :foreground fg)
    (lazy-highlight :background green-bg-s)
    (isearch :foreground bg :background mat)
-   (match :background highlight :foreground mat)
+   (match :background (doom-lighten highlight 0.2) :foreground mat)
 
    ((line-number &override) :foreground lnum :background base1)
    ((line-number-current-line &override) :foreground fg :background base1)
@@ -228,7 +229,7 @@ Can be an integer to determine the exact padding."
     :box `(:color ,border :line-width 1))
    (mode-line-emphasis :foreground (if -modeline-bright base8 highlight))
    (mode-line-buffer-id :foreground func-color :inherit 'bold)
-   (mode-line-highlight :foreground highlight)
+   (mode-line-highlight :background highlight :foreground base2)
 
    ;;; Doom Modeline
    (doom-modeline-bar :background (if -modeline-bright modeline-bg blue))
@@ -243,7 +244,7 @@ Can be an integer to determine the exact padding."
    (whitespace-tab :background bg)
 
    ;;; Ivy
-   (ivy-current-match :background highlight :inherit 'bold :extend t)
+   (ivy-current-match :background (doom-lighten highlight 0.5) :inherit 'bold :extend t)
    (ivy-minibuffer-match-face-1 :inherit 'bold)
    (ivy-minibuffer-match-face-2 :foreground head1 :underline t)
    (ivy-minibuffer-match-face-3 :foreground head4 :underline t)
@@ -252,7 +253,7 @@ Can be an integer to determine the exact padding."
    (ivy-posframe :background base2)
 
    ;;; Vertico
-   (vertico-current :background highlight :foreground fg :bold t)
+   (vertico-current :background (doom-lighten highlight 0.5) :foreground fg :bold t)
    (vertico-group-title :background head1-bg :foreground head1 :bold t)
    (vertico-group-separator :background head1-bg :foreground head1 :strike-through t)
    (vertico-posframe-border :background border)
