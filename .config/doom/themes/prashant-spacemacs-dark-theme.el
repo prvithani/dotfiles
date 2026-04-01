@@ -82,7 +82,7 @@ Can be an integer to determine the exact padding."
    (magenta    '("#a31db1" "#af00df" "magenta"      ))
    (violet     '("#7590db" "#8787d7" "brightmagenta"))  ;; var
    (cyan       '("#28def0" "#00ffff" "brightcyan"   ))
-   (dark-cyan  '("#2d9574" "#2aa198" "cyan"         ))  ;; aqua
+   (dark-cyan  '("#20786b" "#2aa198" "cyan"         ))  ;; aqua (darkened teal)
 
    ;; Extended Spacemacs palette
    (act1          '("#222226"))
@@ -128,26 +128,27 @@ Can be an integer to determine the exact padding."
    (yellow-bg     '("#32322c"))
 
    ;; face categories -- required for all themes
+   ;; Every face-category must resolve to a unique color.
    (highlight      '("#444155" "#444444" "brightblack" ))
    (vertical-bar   border)
    (selection      '("#444155" "#444444" "brightblack" ))
-   (builtin        blue)                                  ;; spacemacs: keyword for builtin
+   (builtin        comp)                                   ;; #c56ec3 — spacemacs comp purple
    (comments       (if prashant-spacemacs-dark-brighter-comments (doom-lighten comment 0.25) comment))
    (doc-comments   meta)
-   (constants      const)
-   (functions      func-color)
-   (keywords       blue)
-   (methods        func-color)
-   (operators      type-color)
-   (type           type-color)
-   (strings        str)
-   (variables      violet)
-   (numbers        const)
+   (constants      const)                                  ;; #a45bad
+   (functions      func-color)                             ;; #bc6ec5
+   (keywords       blue)                                   ;; #4f97d7
+   (methods        teal)                                   ;; #2d9574
+   (operators      orange)                                 ;; #dc752f
+   (type           type-color)                             ;; #ce537a
+   (strings        (doom-lighten str 0.15))               ;; lightened #2d9574, distinct from teal
+   (variables      violet)                                 ;; #7590db
+   (numbers        magenta)                                ;; #a31db1
    (region         highlight)
    (error          err)
    (warning        war)
    (success        suc)
-   (vc-modified    blue)
+   (vc-modified    '("#6b8ec2" "#5f87af" "blue"))          ;; shifted blue, distinct from keyword
    (vc-added       green)
    (vc-deleted     red)
 
