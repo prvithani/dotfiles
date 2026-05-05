@@ -1,0 +1,36 @@
+{
+  "model": "claude-opus-4-7",
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "if echo \"$CLAUDE_TOOL_INPUT\" | grep -E 'git (push|commit).*(master|main)'; then echo 'BLOCKED: push/commit to master requires manual confirmation' >&2; exit 2; fi"
+          }
+        ]
+      }
+    ]
+  },
+  "enabledPlugins": {
+    "superpowers@claude-plugins-official": true,
+    "andrej-karpathy-skills@karpathy-skills": true,
+    "code-simplifier@claude-plugins-official": true,
+    "claude-code-setup@claude-plugins-official": true
+  },
+  "extraKnownMarketplaces": {
+    "karpathy-skills": {
+      "source": {
+        "source": "github",
+        "repo": "forrestchang/andrej-karpathy-skills"
+      }
+    }
+  },
+  "alwaysThinkingEnabled": true,
+  "effortLevel": "xhigh",
+  "feedbackSurveyState": {
+    "lastShownTime": 1754024028616
+  },
+  "skipAutoPermissionPrompt": true
+}
