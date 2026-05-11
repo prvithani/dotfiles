@@ -1,5 +1,4 @@
 {
-  "model": "claude-opus-4-7",
   "hooks": {
     "PreToolUse": [
       {
@@ -29,8 +28,8 @@
   },
   "alwaysThinkingEnabled": true,
   "effortLevel": "xhigh",
+  "skipAutoPermissionPrompt": true,
   "feedbackSurveyState": {
     "lastShownTime": 1754024028616
-  },
-  "skipAutoPermissionPrompt": true
+  }
 }
