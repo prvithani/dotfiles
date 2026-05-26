@@ -84,7 +84,7 @@ The return value is the yanked text."
 
 (defun font-size-125-hidpi ()
   (interactive)
-  (doom-adjust-font-size 16 t))
+  (doom-adjust-font-size 15 t))
 
 (defun font-size-150-hidpi ()
   (interactive)

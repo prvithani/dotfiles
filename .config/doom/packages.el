@@ -72,6 +72,7 @@
   :recipe (:host github :repo "stevemolitor/claude-code.el" :branch "main"
            :files ("*.el" (:exclude "images/*"))))
 (package! claude-code-ide)
+(package! eca :recipe (:host github :repo "editor-code-assistant/eca-emacs" :files ("*.el")))
 
 ;; ORG packages
 (package! ob-duckdb

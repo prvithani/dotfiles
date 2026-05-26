@@ -24,12 +24,13 @@
 ;;;; Fonts
 (setq doom-font
       ;; "Source Code Pro-10"
-      "Iosevka Condensed-10"
+      (font-spec :family "Iosevka Condensed" :size 13)
+      ;; "Iosevka Condensed-10"
       ;; doom-big-font "Hermit-18:medium"
-      doom-symbol-font "Noto Color Emoji-10:regular"
-      doom-emoji-font "Emoji One-10:regular"
+      doom-symbol-font (font-spec :family "Noto Color Emoji" :size 13)
+      doom-emoji-font (font-spec :family "Emoji One" :size 13)
       ;; doom-variable-pitch-font "Avenir Next-12:medium"
-      doom-serif-font "Iosevka Custom Condensed-10:medium")
+      doom-serif-font (font-spec :family "Iosevka Serifed" :size 13))
 
 ;;load custom functions file
 (load "~/.config/doom/custom-functions.el")
@@ -42,8 +43,12 @@
 ;; There are two ways to load a theme. Both assume the theme is installed and
 ;; available. You can either set `doom-theme' or manually load a theme with the
 ;; `load-theme' function. This is the default:
-(setq doom-theme 'prashant-ayu-dark)
-(setq doom-kanagawa-brighter-comments t)
+(setq doom-theme 'prashant-tokyo-night-moon)
+
+;; Frame Opacity
+;; (set-frame-parameter nil (if (eq window-system 'pgtk) 'alpha-background 'alpha) 90)
+(doom/set-frame-opacity 100 t)
+
 (custom-theme-set-faces! 'spacemacs-dark
   '(iedit-occurrence :foreground "#b1951d" :weight bold :inverse-video t)
   '(iedit-read-only-occurrence :inherit region)
@@ -125,10 +130,6 @@
 (setq enable-remote-dir-locals t
       js-indent-level 2)
 
-;; Frame Opacity
-;; (set-frame-parameter nil (if (eq window-system 'pgtk) 'alpha-background 'alpha) 90)
-(doom/set-frame-opacity 95 t)
-
 ;; (after! undo-tree
 ;;   (add-hook 'evil-local-mode-hook #'turn-on-undo-tree-mode))
 
@@ -158,14 +159,6 @@
 ;; automatic indenting of pasted text (functions defined in custom-functions.el)
 (map! :n "p" #'evil-paste-after-and-indent
       :n "P" #'evil-paste-before-and-indent)
-
-;; Corfu
-;; (map! :after corfu
-;;       :map corfu-map
-;;       :gi [tab] #'corfu-next
-;;       :gi "TAB" #'corfu-next
-;;       :gi [backtab] #'corfu-previous
-;;       :gi "S-TAB" #'corfu-previous)
 
 ;; Vterm
 (after! vterm
@@ -308,7 +301,7 @@
 
 ;; --------- CLOJURE ----------
 (after! clojure-mode
-  (setq cider-clojure-cli-aliases ":dev")
+  (setq cider-clojure-cli-aliases ":dev:user")
   (map! :localleader
         :map cider-mode-map
         :prefix ("e" . "eval")
@@ -418,6 +411,13 @@
   (setq +corfu-want-minibuffer-completion nil)
   (add-to-list 'corfu--frame-parameters `(,(if (eq window-system 'pgtk) 'alpha-background 'alpha) . 75)))
 
+;; (map! :after corfu
+;;       :map corfu-map
+;;       :gi [tab] #'corfu-next
+;;       :gi "TAB" #'corfu-next
+;;       :gi [backtab] #'corfu-previous
+;;       :gi "S-TAB" #'corfu-previous)
+
 ;; ----- PROJECTILE -----
 (after! projectile
   (setq projectile-git-fd-args "-H -0 -E .git -tf --strip-cwd-prefix -c never"))
@@ -497,53 +497,57 @@
   (setq explicit-shell-file-name "/bin/bash"))
 
 ;; ----- LSP -----
-(setq lsp-idle-delay 0.500
-      lsp-response-timeout 25
-      lsp-enable-xref t
-      lsp-enable-file-watchers nil
-      lsp-semantic-tokens-enable t
-      lsp-use-plists t
-      lsp-log-io t
-      lsp-ui-sideline-enable nil
-      lsp-ui-doc-mode t)
+
 
 (setq lsp-disabled-clients '(rubocop-ls rubocop-ls-tramp sorbet-ls))
 ;; (setq lsp-ruby-lsp-use-bundler t)
 
 (after! lsp-mode
-  (delete 'lsp-terraform lsp-client-packages)
+  ;; (delete 'lsp-terraform lsp-client-packages)
+  (setq lsp-semantic-tokens-enable t
+        lsp-enable-snippet t
+        lsp-ui-doc-enable t
+        ;; lsp-idle-delay 0.500
+        ;; lsp-response-timeout 25
+        ;; lsp-use-plists t
+        ;; lsp-log-io t
+        ;; lsp-enable-file-watchers nil
+        ;; lsp-enable-xref t
+        ;; lsp-ui-sideline-enable t
+        )
 
-  (when (modulep! :tools lsp +booster)
-    (defun lsp-booster--advice-json-parse (old-fn &rest args)
-      "Try to parse bytecode instead of json."
-      (or
-       (when (equal (following-char) ?#)
-         (let ((bytecode (read (current-buffer))))
-           (when (byte-code-function-p bytecode)
-             (funcall bytecode))))
-       (apply old-fn args)))
-    (advice-add (if (progn (require 'json)
-                           (fboundp 'json-parse-buffer))
-                    'json-parse-buffer
-                  'json-read)
-                :around
-                #'lsp-booster--advice-json-parse)
+  ;; (when (modulep! :tools lsp +booster)
+  ;;   (defun lsp-booster--advice-json-parse (old-fn &rest args)
+  ;;     "Try to parse bytecode instead of json."
+  ;;     (or
+  ;;      (when (equal (following-char) ?#)
+  ;;        (let ((bytecode (read (current-buffer))))
+  ;;          (when (byte-code-function-p bytecode)
+  ;;            (funcall bytecode))))
+  ;;      (apply old-fn args)))
+  ;;   (advice-add (if (progn (require 'json)
+  ;;                          (fboundp 'json-parse-buffer))
+  ;;                   'json-parse-buffer
+  ;;                 'json-read)
+  ;;               :around
+  ;;               #'lsp-booster--advice-json-parse)
 
-    (defun lsp-booster--advice-final-command (old-fn cmd &optional test?)
-      "Prepend emacs-lsp-booster command to lsp CMD."
-      (let ((orig-result (funcall old-fn cmd test?)))
-        (if (and (not test?)                             ;; for check lsp-server-present?
-                 (not (file-remote-p default-directory)) ;; see lsp-resolve-final-command, it would add extra shell wrapper
-                 lsp-use-plists
-                 (not (functionp 'json-rpc-connection))  ;; native json-rpc
-                 (executable-find "emacs-lsp-booster"))
-            (progn
-              (when-let ((command-from-exec-path (executable-find (car orig-result))))  ;; resolve command from exec-path (in case not found in $PATH)
-                (setcar orig-result command-from-exec-path))
-              (message "Using emacs-lsp-booster for %s!" orig-result)
-              (cons "emacs-lsp-booster" orig-result))
-          orig-result)))
-    (advice-add 'lsp-resolve-final-command :around #'lsp-booster--advice-final-command)))
+  ;;   (defun lsp-booster--advice-final-command (old-fn cmd &optional test?)
+  ;;     "Prepend emacs-lsp-booster command to lsp CMD."
+  ;;     (let ((orig-result (funcall old-fn cmd test?)))
+  ;;       (if (and (not test?)                             ;; for check lsp-server-present?
+  ;;                (not (file-remote-p default-directory)) ;; see lsp-resolve-final-command, it would add extra shell wrapper
+  ;;                lsp-use-plists
+  ;;                (not (functionp 'json-rpc-connection))  ;; native json-rpc
+  ;;                (executable-find "emacs-lsp-booster"))
+  ;;           (progn
+  ;;             (when-let ((command-from-exec-path (executable-find (car orig-result))))  ;; resolve command from exec-path (in case not found in $PATH)
+  ;;               (setcar orig-result command-from-exec-path))
+  ;;             (message "Using emacs-lsp-booster for %s!" orig-result)
+  ;;             (cons "emacs-lsp-booster" orig-result))
+  ;;         orig-result)))
+  ;;   (advice-add 'lsp-resolve-final-command :around #'lsp-booster--advice-final-command))
+  )
 
 (after! eglot
   (add-to-list 'eglot-server-programs

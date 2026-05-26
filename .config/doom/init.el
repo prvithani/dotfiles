@@ -76,7 +76,7 @@
        eww               ; the internet is gross
        ibuffer           ; interactive buffer management
        tramp             ; remote files at your arthritic fingertips
-       undo              ; persistent, smarter undo for your inevitable mistakes
+       (undo +tree)      ; persistent, smarter undo for your inevitable mistakes
        vc                ; version-control and Emacs, sitting in a tree
 
        :term
@@ -172,7 +172,7 @@
        ;;lean
        ;;ledger            ; an accounting system in Emacs
        ;;lua               ; one-based indices? one-based indices
-       (markdown +tree-sitter)          ; writing docs for people to ignore
+       markdown           ; writing docs for people to ignore
        ;;nim               ; python + lisp at the speed of c
        ;;nix               ; I hereby declare "nix geht mehr!"
        ;;ocaml             ; an objective camel
