@@ -349,9 +349,9 @@ Can be an integer to determine the exact padding."
    (ediff-fine-diff-C :background blue :foreground bg)
 
    ;;; Flycheck
-   (flycheck-error (:underline `(:style wave :color ,err)))
-   (flycheck-warning (:underline `(:style wave :color ,war)))
-   (flycheck-info (:underline `(:style wave :color ,blue)))
+   ((flycheck-error &override) :underline `(:style dashes :color ,err))
+   ((flycheck-warning &override) :underline `(:style dashes :color ,war))
+   ((flycheck-info &override) :underline `(:style dashes :color ,blue))
    (flycheck-fringe-error :foreground err :inherit 'bold)
    (flycheck-fringe-warning :foreground war :inherit 'bold)
    (flycheck-fringe-info :foreground blue :inherit 'bold)

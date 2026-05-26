@@ -1,19 +1,19 @@
 
-;;; doom-tokyo-night-moon-theme.el --- inspired by Folke's Tokyo Night port for Neovim -*- lexical-binding: t; no-byte-compile: t; -*-
+;; doom-tokyo-night-moon-theme.el --- inspired by Folke's Tokyo Night port for Neovim -*- lexical-binding: t; no-byte-compile: t; -*-
 ;;
 ;; Added: August 19, 2024
 ;; Author: Foster Hangdaan <https://code.fosterhangdaan.com/foster>
 ;; Maintainer:
 ;; Source: https://github.com/folke/tokyonight.nvim
 ;;
-;;; Commentary:
-;;; Code:
+;; Commentary:
+;; Code:
 
 (require 'doom-themes)
 
 
 ;;
-;;; Variables
+;; Variables
 
 (defgroup prashant-tokyo-night-moon-theme nil
   "Options for doom-themes."
@@ -41,7 +41,7 @@
 
 
 ;;
-;;; Theme definition
+;; Theme definition
 
 (def-doom-theme prashant-tokyo-night-moon
     "A variant of Tokyo Night based on Folke's port for Neovim."
@@ -166,7 +166,7 @@
    ;; ((font-lock-string-face &override) :foreground strings)
    ;; ((font-lock-variable-name-face &override) :foreground variables)
 
-   ;;; Doom Modeline
+   ;; Doom Modeline
    (doom-modeline-buffer-path       :foreground blue :weight 'bold)
    (doom-modeline-buffer-major-mode :inherit 'doom-modeline-buffer-path)
    (doom-modeline-buffer-file       :foreground magenta :weight 'bold)
@@ -183,26 +183,26 @@
    (mode-line-buffer-id
     :foreground highlight)
 
-   ;;; Doom Dashboard
+   ;; Doom Dashboard
    (doom-dashboard-banner :foreground comments :slant 'normal)
    (doom-dashboard-loaded :foreground comments :slant 'normal)
    (doom-dashboard-menu-title :foreground keywords :weight 'semi-bold :slant 'normal)
 
-   ;;; Indentation
+   ;; Indentation
    (whitespace-indentation :background bg)
    (whitespace-tab :background bg)
 
-   ;;; Ivy
+   ;; Ivy
    (ivy-subdir :foreground blue)
    (ivy-minibuffer-match-face-1 :foreground green :background bg-alt)
    (ivy-minibuffer-match-face-2 :foreground orange :background bg-alt)
    (ivy-minibuffer-match-face-3 :foreground red :background bg-alt)
    (ivy-minibuffer-match-face-4 :foreground yellow :background bg-alt)
 
-   ;;; Elscreen
+   ;; Elscreen
    (elscreen-tab-other-screen-face :background "#353a42" :foreground "#1e2022")
 
-   ;;; Solaire
+   ;; Solaire
    (solaire-mode-line-face
     :inherit 'mode-line
     :background modeline-bg-l
@@ -212,7 +212,7 @@
     :background modeline-bg-inactive-l
     :box (if -modeline-pad `(:line-width ,-modeline-pad :color ,modeline-bg-inactive-l)))
 
-   ;;; Telephone
+   ;; Telephone
    (telephone-line-accent-active
     :inherit 'mode-line
     :background (doom-lighten bg 0.2))
@@ -223,7 +223,7 @@
     :inherit 'mode-line
     :background dark-blue)
 
-   ;;;; rainbow-delimiters
+   ;; rainbow-delimiters
    (rainbow-delimiters-depth-1-face :foreground fg)
    (rainbow-delimiters-depth-2-face :foreground blue)
    (rainbow-delimiters-depth-3-face :foreground orange)
@@ -232,7 +232,7 @@
    (rainbow-delimiters-depth-6-face :foreground yellow)
    (rainbow-delimiters-depth-7-face :foreground teal)
 
-   ;;; Treemacs
+   ;; Treemacs
    (treemacs-root-face :foreground magenta :weight 'bold :height 1.2)
    (doom-themes-treemacs-root-face :foreground magenta :weight 'ultra-bold :height 1.2)
    (doom-themes-treemacs-file-face :foreground fg-alt)
@@ -241,7 +241,7 @@
    (treemacs-git-modified-face :foreground green)
    (treemacs-git-renamed-face :foreground yellow)
 
-   ;;; Magit
+   ;; Magit
    (magit-section-heading :foreground blue)
    (magit-branch-remote   :foreground orange)
    (magit-diff-our :foreground (doom-darken vc-deleted 0.2) :background (doom-darken vc-deleted 0.7))
@@ -252,58 +252,62 @@
    (magit-diff-hunk-heading-highlight :foreground bg :background base5 :weight 'bold)
 
    ;; --- Major-Mode Faces -------------------
-   ;;; elisp
+   ;; elisp
    (highlight-quoted-symbol :foreground yellow)
 
-   ;;; js2-mode
+   ;; js2-mode
    (js2-function-param :foreground yellow)
    (js2-object-property :foreground dark-green)
 
-   ;;; typescript-mode
+   ;; typescript-mode
    (typescript-this-face :foreground red)
    (typescript-access-modifier-face :foreground yellow)
 
-   ;;; rjsx-mode
+   ;; rjsx-mode
    (rjsx-tag :foreground red)
    (rjsx-text :foreground violet)
    (rjsx-attr :foreground magenta :slant 'italic :weight 'medium)
    (rjsx-tag-bracket-face :foreground (doom-darken red 0.3))
 
-   ;;; css-mode / scss-mode
+   ;; css-mode / scss-mode
    (css-property             :foreground blue)
    (css-selector             :foreground teal)
    (css-pseudo-class         :foreground orange)
 
-   ;;; markdown-mode
+   ;; markdown-mode
    (markdown-markup-face :foreground violet)
    (markdown-header-face :inherit 'bold :foreground dark-cyan)
    (markdown-blockquote-face :foreground violet :background (doom-lighten bg 0.04))
    (markdown-table-face :foreground violet :background (doom-lighten bg 0.04))
    ((markdown-code-face &override) :foreground dark-cyan :background (doom-lighten bg 0.04))
 
-   ;;; org-mode
+   ;; org-mode
    (org-hide :foreground hidden)
    (org-block :background (doom-darken bg 0.25))
    (org-block-begin-line :background (doom-darken bg 0.25) :foreground comments :extend t)
    (solaire-org-hide-face :foreground hidden)
 
-   ;;; web-mode
+   ;; cider
+   (cider-debug-code-overlay-face :background "grey30")
+   (cider-result-overlay-face :background "grey10" :box `(:line-width -1 :color ,base5))
+
+   ;; web-mode
    (web-mode-json-context-face :foreground yellow)
    (web-mode-json-key-face :foreground teal)
    (web-mode-keyword-face :inherit 'font-lock-keyword-face)
-   ;;;; Block
+   ;; Block
    (web-mode-block-delimiter-face :foreground yellow)
-   ;;;; Code
+   ;; Code
    (web-mode-constant-face :foreground constants)
    (web-mode-variable-name-face :foreground variables)
-   ;;;; CSS
+   ;; CSS
    (web-mode-css-pseudo-class-face :foreground orange)
    (web-mode-css-property-name-face :foreground blue)
    (web-mode-css-selector-face :foreground teal)
    (web-mode-css-selector-class-face :foreground keywords :slant 'normal)
    (web-mode-css-selector-tag-face :inherit 'web-mode-css-selector-class-face)
    (web-mode-css-function-face :foreground yellow)
-   ;;;; HTML
+   ;; HTML
    (web-mode-html-attr-engine-face :foreground yellow)
    (web-mode-html-attr-equal-face :foreground operators)
    (web-mode-html-attr-name-face :foreground magenta)
@@ -315,4 +319,4 @@
   ;; ()
   )
 
-;;; prashant-tokyo-night-moon-theme.el ends here
+;; prashant-tokyo-night-moon-theme.el ends here
