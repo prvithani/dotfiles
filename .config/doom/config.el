@@ -43,7 +43,7 @@
 ;; There are two ways to load a theme. Both assume the theme is installed and
 ;; available. You can either set `doom-theme' or manually load a theme with the
 ;; `load-theme' function. This is the default:
-(setq doom-theme 'prashant-windy-dark)
+(setq doom-theme 'prashant-catppuccin-mocha)
 
 ;; Frame Opacity
 ;; (set-frame-parameter nil (if (eq window-system 'pgtk) 'alpha-background 'alpha) 90)
@@ -124,7 +124,7 @@
 
 ;;;; Custom Settings
 (setq-default
- line-spacing nil
+ line-spacing '(0.05 . 0.05)
  read-quoted-char-radix 16
  doom-inhibit-indent-detection t)
 (setq enable-remote-dir-locals t
