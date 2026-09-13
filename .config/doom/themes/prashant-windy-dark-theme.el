@@ -730,7 +730,7 @@
    ((outline-8 &override)
     :foreground (doom-blend fg fuchsia (if prashant-windy-dark-brighter 0.25 0.33)))
         ;;;; org
-   ((org-block &override) :inherit 'fixed-pitch :background (doom-blend bg base0 0.75))
+   ((org-block &override) :background (doom-blend bg base0 0.75))
    (org-level-1 :inherit 'outline-1 :weight 'bold)
    (org-level-2 :inherit 'outline-2 :weight 'bold)
    (org-block-begin-line
@@ -738,10 +738,9 @@
     :background (doom-blend bg stone 0.95)
     :slant 'italic
     :extend t)
-   (org-code                  :inherit 'fixed-pitch :background base2)
+   ((org-code &override)      :foreground bgreen :background bg-alt)
    (org-date                  :foreground orange)
    (org-date-selected         :background (doom-blend bg orange 0.5) :foreground fg-alt)
-   (org-document-info-keyword :inherit 'fixed-pitch)
    (org-dispatcher-highlight  :background bg-alt :foreground yellow)
    (org-ellipsis
     :underline nil
@@ -749,12 +748,9 @@
     :foreground comments
     :weight 'extra-light)
    (org-headline-todo         :foreground amber)
-   ((org-link &override)      :foreground 'unspecified)
-   (org-meta-line             :inherit 'fixed-pitch)
    (org-mode-line-clock-overrun
     :inherit 'mode-line
     :background (doom-blend bg-alt red 0.7))
-   (org-property-value        :inherit 'fixed-pitch)
    (org-roam-dim :foreground comments)
    (org-roam-header-line
     :inherit 'bold
@@ -763,10 +759,6 @@
     :extend t)
    (org-roam-olp :foreground doc-comments)
    ((org-quote &override)     :background base1)
-   (org-special-keyword       :inherit 'fixed-pitch)
-   (org-table                 :inherit 'fixed-pitch :foreground fg :background bg-alt)
-   (org-tag                   :inherit 'fixed-pitch)
-   (org-verbatim              :inherit 'fixed-pitch)
         ;;;; parenface
    (paren-face-match :background base0 :weight 'ultra-bold)
    ((paren-face-mismatch &inherit paren-face-match) :inverse-video t)
