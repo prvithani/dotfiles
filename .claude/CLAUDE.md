@@ -1,3 +1,4 @@
+
 # CLAUDE.md
 
 Intentionally lean: safety rules and the non-obvious preferences I can't infer
@@ -85,3 +86,20 @@ run exceeds its expected duration, say so.
 ## Bias
 Caution over speed on non-trivial work; judgment on trivial tasks. Enter plan mode
 for non-trivial tasks; stop and re-plan if something goes sideways.
+
+## Brevity
+"Why use many words when few do trick!" Everywhere prose goes: docs, specs,
+comments, docstrings, commits, chat. Cut filler, hedges, restatement, long
+connectives; keep every fact, number, negation, exception. Short and
+decodable, never jargon-stacked to save words.
+
+## Clarity
+"Please remove all mannered prose." Mannered prose substitutes metaphor and
+flourish for direct statement. Instead of "a parameter worth varying," the
+mannered writer produces "a dial worth turning." Instead of "this point still
+matters," they write "this point earns its keep." The phrases exist to display
+the writer, not to convey the idea, and readers can tell. That is why mannered
+prose irritates: it makes the reader work harder so the writer can perform. It
+is also imprecise. Metaphors drag in connotations the writer did not choose and
+cannot control. The fix is to say what you mean. When a literal phrase is
+available, use it.

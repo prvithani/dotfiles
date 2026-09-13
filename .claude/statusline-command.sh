@@ -60,6 +60,7 @@ fi
 # Rate limits from input JSON (Claude.ai subscription limits)
 five_hour=$(echo "$input" | jq -r '.rate_limits.five_hour.used_percentage // empty')
 seven_day=$(echo "$input" | jq -r '.rate_limits.seven_day.used_percentage // empty')
+seven_day_fable=$(echo "$input" | jq -r '.rate_limits.seven_day_fable.used_percentage // empty')
 
 if [ -n "$five_hour" ]; then
   five_int=$(printf '%.0f' "$five_hour")
@@ -69,7 +70,12 @@ if [ -n "$seven_day" ]; then
   week_int=$(printf '%.0f' "$seven_day")
   printf "  ${YELLOW}7d: %s%%${RESET}" "$week_int"
 fi
+if [ -n "$seven_day_fable" ]; then
+    fable_int=$(printf '%.0f' "$seven_day_fable")
+    printf "  ${RED}7d: %s%%${RESET}" "$fable_int"
+fi
 
+printf "\n"
 # Session ID
 session_id=$(echo "$input" | jq -r '.session_id // empty')
 if [ -n "$session_id" ]; then

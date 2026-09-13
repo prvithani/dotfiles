@@ -1,5 +1,5 @@
 {
-  "model": "claude-opus-5",
+  "model": "claude-opus-4-8[1m]",
   "hooks": {
     "PreToolUse": [
       {
@@ -22,13 +22,27 @@
     "andrej-karpathy-skills@karpathy-skills": false,
     "code-simplifier@claude-plugins-official": true,
     "claude-code-setup@claude-plugins-official": true,
-    "linear@claude-plugins-official": true
+    "linear@claude-plugins-official": true,
+    "caveman@caveman": true,
+    "ponytail@ponytail": true
   },
   "extraKnownMarketplaces": {
     "karpathy-skills": {
       "source": {
         "source": "github",
         "repo": "forrestchang/andrej-karpathy-skills"
+      }
+    },
+    "caveman": {
+      "source": {
+        "source": "github",
+        "repo": "JuliusBrussee/caveman"
+      }
+    },
+    "ponytail": {
+      "source": {
+        "source": "github",
+        "repo": "DietrichGebert/ponytail"
       }
     }
   },
@@ -37,12 +51,19 @@
   "effortLevel": "xhigh",
   "modelSettings": {
     "claude-opus-5": {
-      "effortLevel": "high"
+      "effortLevel": "xhigh"
     },
     "claude-fable-5": {
       "effortLevel": "high"
+    },
+    "claude-fable-5-1": {
+      "effortLevel": "high"
+    },
+    "claude-opus-4-8": {
+      "effortLevel": "xhigh"
     }
   },
+  "advisorModel": "fable",
   "tui": "fullscreen",
   "showThinkingSummaries": true,
   "theme": "auto",
