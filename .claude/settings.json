@@ -1,5 +1,4 @@
 {
-  "model": "claude-opus-4-8[1m]",
   "hooks": {
     "PreToolUse": [
       {
@@ -104,7 +103,9 @@
     "claude-code-setup@claude-plugins-official": true,
     "linear@claude-plugins-official": true,
     "caveman@caveman": true,
-    "ponytail@ponytail": true
+    "ponytail@ponytail": true,
+    "typesafe@typesafe-ai": true,
+    "github@claude-plugins-official": true
   },
   "extraKnownMarketplaces": {
     "karpathy-skills": {
@@ -124,6 +125,12 @@
         "source": "github",
         "repo": "DietrichGebert/ponytail"
       }
+    },
+    "typesafe-ai": {
+      "source": {
+        "source": "github",
+        "repo": "typesafe-ai/skills"
+      }
     }
   },
   "outputStyle": "Concise",
@@ -141,12 +148,16 @@
     },
     "claude-opus-4-8": {
       "effortLevel": "xhigh"
+    },
+    "claude-opus-5-5": {
+      "effortLevel": "high"
     }
   },
   "advisorModel": "fable",
   "tui": "fullscreen",
   "showThinkingSummaries": true,
   "theme": "auto",
+  "switchModelsOnFlag": true,
   "agentPushNotifEnabled": true,
   "skipAutoPermissionPrompt": true,
   "autoMode": {
