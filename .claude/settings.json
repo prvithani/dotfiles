@@ -10,6 +10,86 @@
             "command": "if jq -r \".tool_input.command // empty\" | grep -qE \"git (push|commit).*(master|main)\"; then echo \"BLOCKED: push/commit to master requires manual confirmation\" >&2; exit 2; fi"
           }
         ]
+      },
+      {
+        "matcher": "AskUserQuestion|ExitPlanMode",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "/root/.claude/hooks/tmux-state.sh waiting"
+          }
+        ]
+      }
+    ],
+    "SessionStart": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "/root/.claude/hooks/tmux-state.sh clear"
+          }
+        ]
+      }
+    ],
+    "SessionEnd": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "/root/.claude/hooks/tmux-state.sh clear"
+          }
+        ]
+      }
+    ],
+    "UserPromptSubmit": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "/root/.claude/hooks/tmux-state.sh working"
+          }
+        ]
+      }
+    ],
+    "PostToolUse": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "/root/.claude/hooks/tmux-state.sh working"
+          }
+        ]
+      }
+    ],
+    "Notification": [
+      {
+        "matcher": "permission_prompt|elicitation_dialog",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "/root/.claude/hooks/tmux-state.sh waiting"
+          }
+        ]
+      }
+    ],
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "/root/.claude/hooks/tmux-state.sh done"
+          }
+        ]
+      }
+    ],
+    "StopFailure": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "/root/.claude/hooks/tmux-state.sh done"
+          }
+        ]
       }
     ]
   },
