@@ -6,7 +6,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "if jq -r \".tool_input.command // empty\" | grep -qE \"git (push|commit).*(master|main)\"; then echo \"BLOCKED: push/commit to master requires manual confirmation\" >&2; exit 2; fi"
+            "command": "python3 /root/.claude/hooks/git-guard.py"
           }
         ]
       },
@@ -92,6 +92,13 @@
       }
     ]
   },
+  "permissions": {
+    "ask": ["Edit(//usr/local/lib/**)"]
+  },
+  "attribution": {
+    "commit": "",
+    "pr": ""
+  },
   "statusLine": {
     "type": "command",
     "command": "bash /root/.claude/statusline-command.sh"
@@ -102,10 +109,11 @@
     "code-simplifier@claude-plugins-official": true,
     "claude-code-setup@claude-plugins-official": true,
     "linear@claude-plugins-official": true,
-    "caveman@caveman": true,
+    "caveman@caveman": false,
     "ponytail@ponytail": true,
     "typesafe@typesafe-ai": true,
-    "github@claude-plugins-official": true
+    "github@claude-plugins-official": true,
+    "cc-plugin-you-should-know@builtin": true
   },
   "extraKnownMarketplaces": {
     "karpathy-skills": {
@@ -170,13 +178,13 @@
       "**Organization**: None configured",
       "**Primary use of Claude Code**: software development",
       "**Cloud provider(s)**: None configured",
-      "**Repository visibility**: assume private (not queryable via gh; origin is a self-hosted GHE-style host git.clarisights.dev, no public-visibility evidence found) — treat git.clarisights.dev:eng/mojart.git and github.com:clarisights/neon.git as private",
+      "**Repository visibility**: assume private (not queryable via gh; origin is the self-hosted GitLab git.clarisights.dev, no public-visibility evidence found) — treat every git.clarisights.dev repo (eng/mojart, eng/app, eng/orchestrator, eng/job-processor, eng/query-lang, eng/sync-db, eng/daffy, eng/daffy-ffi, eng/clajrisights and vendor/clojurescript) and github.com:clarisights/neon.git as private. Public upstreams (github.com/clojure/clojurescript) are outside the trust boundary",
       "**Internal sharing / snippet hosting**: None configured — treat public paste/gist services as outside the trust boundary",
       "**Secrets management**: None configured",
-      "**Default / protected branches**: default branch master; protected-branch status not queryable via gh for this remote — treat master as protected pending confirmation (no explicit approval to push/commit there per CLAUDE.md)",
+      "**Default / protected branches**: default branches per repo — master (mojart, clajrisights), main (app, orchestrator, job-processor, query-lang, sync-db), development (daffy, daffy-ffi), dev (clojurescript); protected-branch status not queryable — treat every default branch as protected (no push/commit there without explicit approval per CLAUDE.md)",
       "**CI/CD deploy targets**: None configured",
       "**Network posture**: None configured",
-      "**Source control**: The trusted repo (labs/mojart) and its two remotes — origin (git.clarisights.dev:eng/mojart.git) and gh (github.com:clarisights/neon.git) — no additional orgs configured",
+      "**Source control**: the trusted repos are those under /root/workspace/repos/labs with origin on git.clarisights.dev (eng/mojart, eng/app, eng/orchestrator, eng/job-processor, eng/query-lang, eng/sync-db, eng/daffy, eng/daffy-ffi, eng/clajrisights and vendor/clojurescript), their sibling worktrees labs/<repo>-<ticket>, and mojart's second remote gh (github.com:clarisights/neon.git) — no additional orgs configured",
       "**Trusted internal domains**: git.clarisights.dev, claridev.lxd, labs.lxd (hosts contacted from this project's transcripts / this repo's own remote)",
       "**Trusted cloud buckets**: None configured",
       "**Key internal services**: None configured",
@@ -187,8 +195,8 @@
       "**Protected deployment namespaces / environments**: None configured — fall back to the Sensitive remote targets heuristic",
       "**Protected IaC scopes**: IAM, RBAC, networking, quota, and node-pool resources; anything whose name or tag carries `prod` or `production` as a whole word or name segment",
       "### User-specific",
-      "**Primary use of Claude Code**: software development (Clojure data-pipeline compiler work in labs/mojart)",
-      "**Trusted repo**: /root/workspace/repos/labs/mojart (this repo) and its remotes origin (git.clarisights.dev:eng/mojart.git) and gh (github.com:clarisights/neon.git); treated as private — confidential material OK there, but content ported from outside this session's repo is not its own work",
+      "**Primary use of Claude Code**: software development across the labs repos (Clojure: the mojart data-pipeline compiler, the app, event-machine-2/orchestrator, job-processor, query-lang, sync-db; C++: daffy), launched from /root/workspace/repos/labs, a directory of repos that is not itself a repo",
+      "**Trusted repos**: every repo and worktree under /root/workspace/repos/labs whose origin is on git.clarisights.dev (eng/mojart, eng/app, eng/orchestrator, eng/job-processor, eng/query-lang, eng/sync-db, eng/daffy, eng/daffy-ffi, eng/clajrisights and vendor/clojurescript), plus mojart's gh remote (github.com:clarisights/neon.git); treated as private — confidential material OK there, and moving work between these repos is in scope; content ported from outside them is not their own work",
       "**Org-specific CLIs**: None configured"
     ]
   },
