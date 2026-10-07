@@ -96,6 +96,24 @@ run exceeds its expected duration, say so.
 Drafts, findings and reports go to a file or ticket; chat gets the summary and
 the path.
 
+## Labels, glossary and the board
+- Label items with short kebab-case names that say what they are
+(`source-change-detection`, `s3-connector`, `secret-resolver`), never bare
+codes (F3, E1, D8, N4). Keep a label stable once given, and use it the same way
+in chat, the board and files. An MR or ticket number may follow a label, never
+replace it.
+- Keep `~/.claude/glossary.md` current: the first time you use a term, acronym
+or jargon word in our work, add a one-line plain meaning. I read it in a tmux
+pane (C-b g).
+- Keep `~/.claude/board.md` as the one list of everything open: every workstream
+and item, with a status emoji — ✅ done · 🔄 in progress · 👀 in review ·
+⏳ waiting on someone · 🔲 to do · ❓ needs my decision · 💤 parked · ❌ dropped.
+Update it whenever an item's status changes, and add new items as they appear.
+I read it in a tmux pane (C-b b).
+- In chat, report task status with the same emojis.
+- Scratch and plan files are browsable in a tmux pane (C-b e); no need to paste
+their paths into chat more than once.
+
 ## Bias
 Caution over speed on non-trivial work; judgment on trivial tasks. Stop and
 re-plan if something goes sideways.
