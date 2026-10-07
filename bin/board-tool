@@ -4,6 +4,12 @@
 #   board-tool stranded-board PROJECT SID      open items on other sessions' boards
 #   board-tool stranded-glossary PROJECT SID   other sessions' terms the project lacks
 #   board-tool ended PROJECT SID               mark a session ended (session-end hook)
+#   board-tool clear [--done] [SID]            empty a session board; --done drops
+#                                              only ✅ and ❌ items
+#   board-tool promote [SID]                   move a session board's open items
+#                                              to the project board
+#   board-tool prune                           move the project board's ✅ and ❌
+#                                              items to board-archive.md
 #
 # Only ENDED sessions are scanned, so a session still running in another pane is
 # never reported as abandoned. A session has ended when it wrote an `ended`
@@ -76,10 +82,113 @@ stranded_glossary() {
   return 0
 }
 
+# The board of session SID, or else of the Claude pane in this tmux window.
+session_board() {
+  local sid proj f
+  sid=${1:-$(tmux list-panes -F '#{@claude_session}' 2>/dev/null | grep -m1 . || true)}
+  [ -n "$sid" ] || { echo "board-tool: no SID given and no Claude pane in this window" >&2; exit 1; }
+  proj=$(project "$PWD"); f=$proj/sessions/$sid/board.md
+  [ -f "$f" ] || { echo "board-tool: no board at $f" >&2; exit 1; }
+  echo "$f"
+}
+
+# Plain clear refuses while open items remain: promote them first.
+clear_board() {
+  local done=0 f open
+  [ "${1:-}" = --done ] && { done=1; shift; }
+  f=$(session_board "${1:-}")
+  if [ $done = 1 ]; then
+    sed -i -E '/^\s*- (✅|❌) /d' "$f"
+  else
+    open=$(grep -E '^\s*- (🔲|🔄|👀|⏳|❓|💤) ' "$f" || true)
+    [ -z "$open" ] || { printf 'board-tool: open items on %s; promote them or use --done:\n%s\n' "$f" "$open" >&2; exit 1; }
+    : > "$f"
+  fi
+  echo "cleared $f"
+}
+
+# Moves items, with their indented lines, from board SRC to file DST and drops
+# the sections that leaves empty.
+#   promote: open items go to the project board, under the section of the same
+#            "## " heading, else under a section named after the session title.
+#   prune:   ✅ and ❌ items go to the archive, under "## <date>", one "### "
+#            subsection per board section.
+mover='
+import re, sys, datetime
+mode, sf, df = sys.argv[1:4]
+item = re.compile(r"^\s*- (🔲|🔄|👀|⏳|❓|💤) " if mode == "promote" else r"^\s*- (✅|❌) ")
+any_item = re.compile(r"^\s*- \S+ ")
+lines = open(sf).read().splitlines()
+title = next((l[2:] for l in lines if l.startswith("# ")), "session")
+title = title.removeprefix("Session board — ").removeprefix("Board — ")
+keep, moved, section, taking = [], {}, None, False
+for l in lines:
+    if l.startswith("## "):
+        section, taking = l, False
+    elif item.match(l):
+        taking = True
+    elif not (taking and l.startswith((" ", "\t")) and l.strip() and not any_item.match(l)):
+        taking = False
+    (moved.setdefault(section, []) if taking else keep).append(l)
+if not moved:
+    print(f"nothing to move on {sf}"); sys.exit(0)
+# Drop "## " sections the move emptied (heading plus blank lines only).
+out, block = [], []
+for l in keep + ["## "]:
+    if l.startswith("## "):
+        if not (block and block[0] in moved and not any(x.strip() for x in block[1:])):
+            out += block
+        block = []
+    block.append(l)
+keep = out
+while keep and not keep[-1].strip():
+    keep.pop()
+try:
+    dst = open(df).read().splitlines()
+except FileNotFoundError:
+    dst = ["# Board" if mode == "promote" else f"# Board archive — {title}"]
+today = str(datetime.date.today())
+if mode == "prune" and f"## {today}" not in dst:
+    dst += ["", f"## {today}"]
+for sec, items in moved.items():
+    n = sum(bool(item.match(l)) for l in items)
+    if mode == "prune":
+        dst += ["", "### " + (sec[3:] if sec else "(no section)"), ""] + items
+        print(f"{n} item(s) <- {sec or title}")
+        continue
+    head = sec or f"## {title} ({today})"
+    if head in dst:
+        i = dst.index(head) + 1
+        while i < len(dst) and not dst[i].startswith("## "):
+            i += 1
+        while i > 0 and not dst[i - 1].strip():
+            i -= 1
+        dst[i:i] = items
+    else:
+        dst += ["", head, ""] + items
+    print(f"{n} item(s) -> {head}")
+open(df, "w").write("\n".join(dst) + "\n")
+open(sf, "w").write("\n".join(keep) + "\n")
+'
+
+promote() {
+  local f; f=$(session_board "${1:-}")
+  python3 -c "$mover" promote "$f" "$(dirname "$(dirname "$(dirname "$f")")")/board.md"
+}
+
+prune() {
+  local proj; proj=$(project "$PWD")
+  [ -f "$proj/board.md" ] || { echo "board-tool: no board at $proj/board.md" >&2; exit 1; }
+  python3 -c "$mover" prune "$proj/board.md" "$proj/board-archive.md"
+}
+
 case ${1:-} in
   project)           project "${2:?dir}" ;;
   stranded-board)    stranded_board "${2:?project}" "${3:-none}" ;;
   stranded-glossary) stranded_glossary "${2:?project}" "${3:-none}" ;;
+  clear)             shift; clear_board "$@" ;;
+  promote)           shift; promote "$@" ;;
+  prune)             prune ;;
   ended)             [ -d "${2:?project}/sessions/${3:?sid}" ] && date -Is > "$2/sessions/$3/ended"; exit 0 ;;
-  *) echo "usage: board-tool project DIR | stranded-board|stranded-glossary|ended PROJECT SID" >&2; exit 2 ;;
+  *) echo "usage: board-tool project DIR | stranded-board|stranded-glossary|ended PROJECT SID | clear [--done] [SID] | promote [SID] | prune" >&2; exit 2 ;;
 esac
