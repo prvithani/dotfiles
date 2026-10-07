@@ -43,7 +43,7 @@
 ;; There are two ways to load a theme. Both assume the theme is installed and
 ;; available. You can either set `doom-theme' or manually load a theme with the
 ;; `load-theme' function. This is the default:
-(setq doom-theme 'prashant-catppuccin-mocha)
+(setq doom-theme 'prashant-catppuccin-macchiato)
 
 ;; Frame Opacity
 ;; (set-frame-parameter nil (if (eq window-system 'pgtk) 'alpha-background 'alpha) 90)
@@ -642,6 +642,9 @@
 
 ;; -------- GPTEL ---------
 (after! gptel
+  ;; Doom limits auth-sources to its .gpg files; the OpenRouter key lives in
+  ;; the plain ~/.authinfo (mode 600), outside this repo.
+  (add-to-list 'auth-sources "~/.authinfo")
   (setq gptel-model 'google/gemini-2.5-pro
         ;; gptel-backend (gptel-make-gemini "Gemini"
         ;;                 :stream t
@@ -650,8 +653,11 @@
                         :host "openrouter.ai"
                         :endpoint "/api/v1/chat/completions"
                         :stream t
-                        ;;can be a function that returns the key
-                        :key "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"
+                        ;; Read when a request is made, from ~/.authinfo (not tracked):
+                        ;;   machine openrouter.ai login apikey password sk-or-v1-…
+                        :key (lambda ()
+                               (or (auth-source-pick-first-password :host "openrouter.ai")
+                                   (user-error "No openrouter.ai entry in ~/.authinfo")))
                         :models '(google/gemini-2.5-pro
                                   anthropic/claude-sonnet-4
                                   anthropic/claude-opus-4
@@ -679,7 +685,10 @@
 (use-package! aidermacs
   :defer t
   :config
-  (setenv "OPENROUTER_API_KEY" "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")
+  ;; The OpenRouter key from ~/.authinfo (not tracked), as for gptel above.
+  (add-to-list 'auth-sources "~/.authinfo")
+  (when-let ((key (auth-source-pick-first-password :host "openrouter.ai")))
+    (setenv "OPENROUTER_API_KEY" key))
 
   (setq aidermacks-default-chat-mode 'ask)
   ;; Default model used for all modes unless overridden
