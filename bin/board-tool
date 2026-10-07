@@ -1,0 +1,85 @@
+#!/usr/bin/env bash
+# Finds a project's board and glossary files and what earlier sessions left open.
+#   board-tool project DIR                 the project directory for DIR
+#   board-tool stranded-board PROJECT SID      open items on other sessions' boards
+#   board-tool stranded-glossary PROJECT SID   other sessions' terms the project lacks
+#   board-tool ended PROJECT SID               mark a session ended (session-end hook)
+#
+# Only ENDED sessions are scanned, so a session still running in another pane is
+# never reported as abandoned. A session has ended when it wrote an `ended`
+# marker (clean exit), or when no tmux pane carries its id (@claude_session,
+# set by tmux-state.sh) and its board has not changed for STALE_MIN minutes
+# (default 120; covers a crash, where no session-end hook runs).
+#
+# Project: ~/.claude/projects/<slug>, <slug> being the nearest ancestor of DIR
+# with a board there (else DIR), every non-alphanumeric character as "-".
+# Session files: <project>/sessions/<id>/{board,glossary}.md. An item is open
+# unless it is ✅ or ❌; promoting it moves it to the project board, so what
+# remains on a session board is what nobody has carried forward yet.
+set -euo pipefail
+
+projects=$HOME/.claude/projects
+slug() { printf '%s' "$1" | sed 's/[^A-Za-z0-9]/-/g'; }
+
+project() {
+  local d=$1
+  while :; do
+    [ -f "$projects/$(slug "$d")/board.md" ] && { readlink -f "$projects/$(slug "$d")"; return; }
+    [ "$d" = / ] && break
+    d=$(dirname "$d")
+  done
+  echo "$projects/$(slug "$1")"
+}
+
+stale_min=${STALE_MIN:-120}
+
+# Session ids that a tmux pane still carries: running sessions.
+live() { tmux list-panes -a -F '#{@claude_session}' 2>/dev/null | grep -v '^$' || true; }
+
+# Ended sessions' files of one kind, newest first, excluding session `sid`.
+others() {
+  local proj=$1 sid=$2 name=$3 f d id running
+  running=$(live)
+  for f in $(ls -t "$proj"/sessions/*/"$name.md" 2>/dev/null); do
+    d=$(dirname "$f"); id=$(basename "$d")
+    [ "$id" = "$sid" ] && continue
+    if [ ! -f "$d/ended" ]; then
+      grep -qxF -- "$id" <<<"$running" && continue
+      [ -n "$(find "$d" -maxdepth 1 -name board.md -mmin -"$stale_min" 2>/dev/null)" ] && continue
+    fi
+    echo "$f"
+  done
+}
+
+stranded_board() {
+  local proj=$1 sid=$2 out="" f items title
+  for f in $(others "$proj" "$sid" board); do
+    items=$(grep -E '^\s*- (🔲|🔄|👀|⏳|❓|💤) ' "$f" || true)
+    [ -n "$items" ] || continue
+    title=$(grep -m1 '^# ' "$f" | sed 's/^# //')
+    out+="### ${title:-session} ($(basename "$(dirname "$f")" | cut -c1-8), $(date -r "$f" +%F))"$'\n'"$items"$'\n\n'
+  done
+  [ -n "$out" ] && printf '## Open in ended sessions\n\n%s' "$out"
+  return 0
+}
+
+stranded_glossary() {
+  local proj=$1 sid=$2 out="" f line term
+  local known; known=$(grep -oE '^- \*\*[^*]+\*\*' "$proj/glossary.md" 2>/dev/null || true)
+  for f in $(others "$proj" "$sid" glossary); do
+    while IFS= read -r line; do
+      term=$(grep -oE '^- \*\*[^*]+\*\*' <<<"$line")
+      grep -qxF -- "$term" <<<"$known" || { out+="$line"$'\n'; known+=$'\n'"$term"; }
+    done < <(grep -E '^- \*\*[^*]+\*\*' "$f" || true)
+  done
+  [ -n "$out" ] && printf '## Terms from ended sessions, not in the project glossary\n\n%s' "$out"
+  return 0
+}
+
+case ${1:-} in
+  project)           project "${2:?dir}" ;;
+  stranded-board)    stranded_board "${2:?project}" "${3:-none}" ;;
+  stranded-glossary) stranded_glossary "${2:?project}" "${3:-none}" ;;
+  ended)             [ -d "${2:?project}/sessions/${3:?sid}" ] && date -Is > "$2/sessions/$3/ended"; exit 0 ;;
+  *) echo "usage: board-tool project DIR | stranded-board|stranded-glossary|ended PROJECT SID" >&2; exit 2 ;;
+esac

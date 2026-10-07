@@ -5,11 +5,10 @@
 #   tmux-side files    [window] [dir] [pane]   pick a scratch or plan file, then read it
 #
 # Where the files live:
-#   project  ~/.claude/projects/<slug>/{board,glossary}.md, <slug> being the
-#            nearest ancestor of `dir` that has a board there (else `dir`
-#            itself), with every non-alphanumeric character replaced by "-"
+#   project  ~/.claude/projects/<slug>/{board,glossary}.md (see board-tool)
 #   session  <project>/sessions/<session-id>/{board,glossary}.md, the id read
 #            from the Claude pane's @claude_session (set by tmux-state.sh)
+# Below both: items and terms ended sessions left that the project lacks.
 #
 # The same binding closes the pane again. In a viewer, r re-renders (picking up
 # Claude's edits) and q quits: board and glossary close, files returns to the
@@ -21,20 +20,7 @@ win=${2:-}
 dir=${3:-$PWD}
 caller=${4:-}
 self=$(readlink -f "$0")
-projects=$HOME/.claude/projects
-
-slug() { printf '%s' "$1" | sed 's/[^A-Za-z0-9]/-/g'; }
-
-# The project directory for a working directory: nearest ancestor with a board.
-project_of() {
-  local d=$1
-  while :; do
-    [ -f "$projects/$(slug "$d")/board.md" ] && { echo "$projects/$(slug "$d")"; return; }
-    [ "$d" = / ] && break
-    d=$(dirname "$d")
-  done
-  echo "$projects/$(slug "$1")"
-}
+tool=$(dirname "$self")/board-tool
 
 # Render one file for a terminal of the pane's width.
 render() {
@@ -52,14 +38,19 @@ printf '#command\nr quit r\n' > "$keys"
 reload=114
 page() { local st=0; less -R --lesskey-src="$keys" || st=$?; return $st; }
 
-# The session file (when the session has one) above the project file.
+# The session file (when the session has one), the project file, then what
+# ended sessions left that the project file does not carry yet.
 layered() {
   local name=$1
   local s="$SIDE_PROJECT/sessions/${SIDE_SESSION:-none}/$name.md" p="$SIDE_PROJECT/$name.md"
+  local extra; extra=$(mktemp --suffix=.md)
+  "$tool" "stranded-$name" "$SIDE_PROJECT" "${SIDE_SESSION:-none}" > "$extra" || true
   { [ -f "$s" ] && { render "$s"; echo; }
     [ -f "$p" ] && render "$p"
+    [ -s "$extra" ] && { echo; render "$extra"; }
     [ -f "$s" ] || [ -f "$p" ] || echo "No $name yet for $SIDE_PROJECT"
   } | page
+  local st=$?; rm -f "$extra"; return $st
 }
 
 if [ "$win" = "--run" ]; then
@@ -107,9 +98,9 @@ if [ -z "$sid" ]; then
                         | awk '$1 != "" {print; exit}') || true
   cdir=${cdir:-$dir}
 fi
-proj=$(project_of "$cdir")
+proj=$("$tool" project "$cdir")
 
-new=$(tmux split-window $tgt -c "$dir" -h -l 40% -P -F '#{pane_id}' \
+new=$(tmux split-window $tgt -c "$dir" -h -l 30% -P -F '#{pane_id}' \
         -e SIDE_PROJECT="$proj" -e SIDE_SESSION="$sid" "$self $mode --run")
 tmux set -p -t "$new" @side "$mode"
 tmux select-pane -t "$new" -T "$mode"

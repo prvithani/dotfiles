@@ -26,6 +26,10 @@
           {
             "type": "command",
             "command": "/root/.claude/hooks/tmux-state.sh clear"
+          },
+          {
+            "type": "command",
+            "command": "/root/.claude/hooks/stranded-items.sh"
           }
         ]
       }
@@ -36,6 +40,10 @@
           {
             "type": "command",
             "command": "/root/.claude/hooks/tmux-state.sh clear"
+          },
+          {
+            "type": "command",
+            "command": "/root/.claude/hooks/stranded-items.sh end"
           }
         ]
       }

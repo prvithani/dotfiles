@@ -118,6 +118,10 @@ one-line plain meaning.
 - Write to the session files by default. Promote an item or term to the
 project files when it outlives the session: an item still open at a handoff,
 compaction or the session's end, or a term used again in another session.
+Promoting moves it: remove it from the session file.
+- A session-start hook lists what ended sessions left on their own files (a
+session still open in a tmux pane is never listed). Promote each
+still-relevant item or term then, and ask me about unclear ones.
 - I read them in tmux panes: C-b b (board), C-b g (glossary), session above
 project.
 - In chat, report task status with the same emojis.
