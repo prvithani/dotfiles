@@ -1,11 +1,16 @@
 #!/usr/bin/env bash
 # Records this Claude session's state on its tmux pane as @claude_state, which
-# ~/.tmux.conf reads to color pane borders and window tabs.
+# ~/.tmux.conf reads to color pane borders and window tabs, and its session id
+# as @claude_session, which bin/tmux-side reads to find the session's board and
+# glossary.
 # Usage: tmux-state.sh working|waiting|done|clear
 set -uo pipefail
 
 [ -n "${TMUX_PANE:-}" ] || exit 0
-cat >/dev/null
+input=$(cat)
+
+sid=$(jq -r '.session_id // empty' <<<"$input" 2>/dev/null)
+[ -n "$sid" ] && tmux set -p -t "$TMUX_PANE" @claude_session "$sid"
 
 case "${1:-}" in
   clear)
