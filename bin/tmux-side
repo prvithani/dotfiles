@@ -1,0 +1,63 @@
+#!/usr/bin/env bash
+# Toggle a side pane in the current tmux window.
+#   tmux-side glossary [window] [dir]   ~/.claude/glossary.md
+#   tmux-side board    [window] [dir]   ~/.claude/board.md
+#   tmux-side files    [window] [dir]   pick a scratch or plan file, then read it
+# `dir` is the calling pane's directory: files lists the .scratch and
+# .claude/plans files of its git repo, or of every repo below it when it is
+# not inside one (a directory of repos).
+# The same binding closes the pane again. In a viewer, q leaves it: the
+# glossary and board re-render (picking up Claude's edits), files returns to
+# the list. Markdown renders through rich; other files highlight with pygments.
+set -euo pipefail
+
+mode=${1:?usage: tmux-side glossary|board|files [window-id] [dir]}
+win=${2:-}
+dir=${3:-$PWD}
+self=$(readlink -f "$0")
+
+# Render one file for a terminal of the pane's width.
+render() {
+  local f=$1 w; w=$(tput cols 2>/dev/null || echo 100)
+  case $f in
+    *.md)       python3 -m rich.markdown -c -t one-dark -w "$w" "$f" ;;
+    *.edn|*.clj|*.cljc|*.cljs) pygmentize -f terminal256 -O style=one-dark -l clojure "$f" ;;
+    *)          pygmentize -f terminal256 -O style=one-dark "$f" 2>/dev/null || cat "$f" ;;
+  esac
+}
+view() { render "$1" | less -R; }
+
+if [ "$win" = "--run" ]; then
+  case $mode in
+    glossary|board)
+      while true; do view "$HOME/.claude/$mode.md"; done ;;
+    files)
+      root=$(git -C "$PWD" rev-parse --show-toplevel 2>/dev/null || echo "$PWD")
+      list() {
+        { printf '%s\n' "$HOME/.claude/board.md" "$HOME/.claude/glossary.md"
+          find "$root" -maxdepth 4 -type f \( -path '*/.scratch/*' -o -path '*/.claude/plans/*' \) \
+               \( -name '*.md' -o -name '*.org' -o -name '*.txt' -o -name '*.edn' \) \
+               -not -path '*/node_modules/*' -printf '%T@ %p\n' 2>/dev/null | sort -rn | cut -d' ' -f2-
+        } | sed "s|^$root/||; s|^$HOME/|~/|"
+      }
+      path() { case $1 in "~/"*) echo "$HOME/${1#\~/}" ;; /*) echo "$1" ;; *) echo "$root/$1" ;; esac; }
+      export -f render path; export root
+      while sel=$(list | fzf --prompt 'file> ' --height 100% --reverse --ansi \
+                    --preview 'bash -c "render \"\$(path {})\" | head -120"' \
+                    --preview-window down,60%); do
+        view "$(path "$sel")"
+      done
+      exit 0 ;;
+  esac
+fi
+
+# Toggle: close this mode's pane if the window has one, else open it.
+tgt=${win:+-t $win}
+pane=$(tmux list-panes $tgt -F '#{pane_id} #{@side}' | awk -v m="$mode" '$2 == m {print $1; exit}')
+if [ -n "$pane" ]; then
+  tmux kill-pane -t "$pane"
+else
+  new=$(tmux split-window $tgt -c "$dir" -h -l 40% -P -F '#{pane_id}' "$self $mode --run")
+  tmux set -p -t "$new" @side "$mode"
+  tmux select-pane -t "$new" -T "$mode"
+fi
