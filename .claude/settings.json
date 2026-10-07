@@ -1,4 +1,13 @@
 {
+  "attribution": {
+    "commit": "",
+    "pr": ""
+  },
+  "permissions": {
+    "ask": [
+      "Edit(//usr/local/lib/**)"
+    ]
+  },
   "hooks": {
     "PreToolUse": [
       {
@@ -100,13 +109,6 @@
       }
     ]
   },
-  "permissions": {
-    "ask": ["Edit(//usr/local/lib/**)"]
-  },
-  "attribution": {
-    "commit": "",
-    "pr": ""
-  },
   "statusLine": {
     "type": "command",
     "command": "bash /root/.claude/statusline-command.sh"
@@ -117,7 +119,7 @@
     "code-simplifier@claude-plugins-official": true,
     "claude-code-setup@claude-plugins-official": true,
     "linear@claude-plugins-official": true,
-    "caveman@caveman": false,
+    "caveman@caveman": true,
     "ponytail@ponytail": true,
     "typesafe@typesafe-ai": true,
     "github@claude-plugins-official": true,
