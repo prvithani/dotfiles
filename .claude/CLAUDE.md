@@ -102,14 +102,24 @@ the path.
 codes (F3, E1, D8, N4). Keep a label stable once given, and use it the same way
 in chat, the board and files. An MR or ticket number may follow a label, never
 replace it.
-- Keep `~/.claude/glossary.md` current: the first time you use a term, acronym
-or jargon word in our work, add a one-line plain meaning. I read it in a tmux
-pane (C-b g).
-- Keep `~/.claude/board.md` as the one list of everything open: every workstream
-and item, with a status emoji — ✅ done · 🔄 in progress · 👀 in review ·
-⏳ waiting on someone · 🔲 to do · ❓ needs my decision · 💤 parked · ❌ dropped.
-Update it whenever an item's status changes, and add new items as they appear.
-I read it in a tmux pane (C-b b).
+- Each project and each session has a board and a glossary:
+  - project: `~/.claude/projects/<slug>/{board,glossary}.md`. `<slug>` is the
+    nearest ancestor of the working directory that already has a board there
+    (else the working directory itself), every non-alphanumeric character
+    replaced by `-`. Persistent.
+  - session: `<project>/sessions/<session-id>/{board,glossary}.md`, the id from
+    your scratchpad path. Ends with the session.
+- Board: every workstream and item, with a status emoji — ✅ done ·
+🔄 in progress · 👀 in review · ⏳ waiting on someone · 🔲 to do ·
+❓ needs my decision · 💤 parked · ❌ dropped. Update it whenever an item's status
+changes, and add new items as they appear.
+- Glossary: the first time you use a term, acronym or jargon word, add a
+one-line plain meaning.
+- Write to the session files by default. Promote an item or term to the
+project files when it outlives the session: an item still open at a handoff,
+compaction or the session's end, or a term used again in another session.
+- I read them in tmux panes: C-b b (board), C-b g (glossary), session above
+project.
 - In chat, report task status with the same emojis.
 - Scratch and plan files are browsable in a tmux pane (C-b e); no need to paste
 their paths into chat more than once.
