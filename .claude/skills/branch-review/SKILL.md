@@ -1,7 +1,7 @@
 # .claude/skills/branch-review/SKILL.md
 ---
 name: branch-review
-description: Thorough branch-vs-master review across seven lenses
+description: Thorough branch-vs-master review across eight lenses
 ---
 Dispatch parallel reviewer subagents against `git diff master...HEAD`, one per lens:
 1. Correctness & edge cases
@@ -11,9 +11,16 @@ Dispatch parallel reviewer subagents against `git diff master...HEAD`, one per l
 5. Performance regressions
 6. Complexity & maintainability (invoke the `complexity-analyzer` skill over the diff; use its findings table verbatim)
 7. Docs/spec drift
+8. Design: mechanism vs policy ("if a second user appeared, would I have to refactor?"), separation of concerns and dependency direction, encapsulation, one representation per piece of knowledge, seams with a single user (YAGNI), illegal states / fail fast, outward-facing extension-point changes, vocabulary (one word, one meaning), and conformance to the approved spec and plan (deviations recorded?)
 
 Rules:
 - Every finding MUST cite file:line and include a repro or measurement. No unverified root causes.
 - Classify Critical / Important / Nit.
 - Emit a status line to the user after each agent returns.
 - Finish with a single consolidated table, then STOP and ask before fixing.
+- Not finding anything is also fine.
+- After fixing: send each reviewer agent (SendMessage, same agent, so it keeps
+  its context) its own findings plus where the fixes are. It re-checks
+  read-only: resolved / partly / not with file:line, and any new defect the
+  fixes added. Every lens re-checks, including ones that had only Nits: a fix
+  can regress their ground. Fix what the re-check finds before committing.
