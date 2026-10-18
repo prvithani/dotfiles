@@ -18,7 +18,15 @@ Rules:
 - Classify Critical / Important / Nit.
 - Emit a status line to the user after each agent returns.
 - Finish with a single consolidated table, then STOP and ask before fixing.
-- Not finding anything is also fine.
+- Be pragmatic. A finding needs a concrete failure (input or state, then wrong
+  result), a measured cost, or a broken rule from CLAUDE.md or the spec.
+  "Could be cleaner" alone is not a finding.
+- Zero findings is a normal result for a clean diff. The number of findings
+  does not measure review quality.
+- Critical or Important only if a senior engineer would block the merge on it.
+- At most 3 Nits per lens, and only if they change meaning or mislead a reader.
+  Code that follows the codebase convention is not a Nit.
+- Don't reopen a decision recorded in the spec or an ADR without new evidence.
 - After fixing: send each reviewer agent (SendMessage, same agent, so it keeps
   its context) its own findings plus where the fixes are. It re-checks
   read-only: resolved / partly / not with file:line, and any new defect the
