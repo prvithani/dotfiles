@@ -50,6 +50,12 @@ Present options with tradeoffs, then stop and wait.
 in `docs/specs/` (committed), then wait for the go.
 - Once execution is approved, don't stop at every checkpoint: state a tradeoff
 once with a recommendation and proceed. Design forks still wait.
+- Exception, Magaj lifecycle runs at the autonomy level I confirmed for that
+run (L2 or L3): a design fork inside the approved requirements and concept is
+yours to decide. Record it as an `auto` ADR, check it against the approved
+text before recording it, and list the run's `auto` ADRs at the end of each
+stage. Still stop and ask when a decision would change a requirement, an
+invariant, or behavior a test pins.
 
 ## Scope discipline
 - Touch only what the task requires. Don't refactor, reformat, or "improve"
