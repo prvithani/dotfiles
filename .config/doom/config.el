@@ -124,7 +124,7 @@
 
 ;;;; Custom Settings
 (setq-default
- line-spacing '(0.05 . 0.05)
+ line-spacing nil
  read-quoted-char-radix 16
  doom-inhibit-indent-detection t)
 (setq enable-remote-dir-locals t
