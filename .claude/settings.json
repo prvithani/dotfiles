@@ -17,6 +17,10 @@
           {
             "type": "command",
             "command": "python3 /root/.claude/hooks/git-guard.py"
+          },
+	  { 
+            "type": "command",
+            "command": "rtk hook claude"
           }
         ]
       },
@@ -40,6 +44,10 @@
           {
             "type": "command",
             "command": "/root/.claude/hooks/stranded-items.sh"
+          },
+	  {
+            "type": "command",
+            "command": "rtk hook claude"
           }
         ]
       }
@@ -120,11 +128,12 @@
     "code-simplifier@claude-plugins-official": true,
     "claude-code-setup@claude-plugins-official": true,
     "linear@claude-plugins-official": true,
-    "caveman@caveman": true,
+    "caveman@caveman": false,
     "ponytail@ponytail": true,
     "typesafe@typesafe-ai": true,
     "github@claude-plugins-official": true,
-    "cc-plugin-you-should-know@builtin": true
+    "cc-plugin-you-should-know@builtin": true,
+    "playwright@anthropic-plugin-directory": true
   },
   "extraKnownMarketplaces": {
     "karpathy-skills": {
@@ -169,7 +178,7 @@
       "effortLevel": "xhigh"
     },
     "claude-opus-5-5": {
-      "effortLevel": "medium"
+      "effortLevel": "high"
     }
   },
   "advisorModel": "fable",
