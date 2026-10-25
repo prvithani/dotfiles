@@ -18,7 +18,7 @@
             "type": "command",
             "command": "python3 /root/.claude/hooks/git-guard.py"
           },
-	  { 
+          {
             "type": "command",
             "command": "rtk hook claude"
           }
@@ -45,7 +45,7 @@
             "type": "command",
             "command": "/root/.claude/hooks/stranded-items.sh"
           },
-	  {
+          {
             "type": "command",
             "command": "rtk hook claude"
           }
