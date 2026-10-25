@@ -50,12 +50,12 @@ Present options with tradeoffs, then stop and wait.
 in `docs/specs/` (committed), then wait for the go.
 - Once execution is approved, don't stop at every checkpoint: state a tradeoff
 once with a recommendation and proceed. Design forks still wait.
-- Exception, Magaj lifecycle runs at the autonomy level I confirmed for that
-run (L2 or L3): a design fork inside the approved requirements and concept is
-yours to decide. Record it as an `auto` ADR, check it against the approved
-text before recording it, and list the run's `auto` ADRs at the end of each
-stage. Still stop and ask when a decision would change a requirement, an
-invariant, or behavior a test pins.
+- Exception, Enjinia lifecycle runs at the autonomy level I confirmed for
+that run (L2 or L3): a design fork inside the approved requirements and
+concept is yours to decide. Record it as an `auto` ADR, check it against the
+approved text before recording it, and list the run's `auto` ADRs at the end
+of each stage. Still stop and ask when a decision would change a requirement,
+an invariant, or behavior a test pins.
 
 ## Scope discipline
 - Touch only what the task requires. Don't refactor, reformat, or "improve"
@@ -151,12 +151,26 @@ and drag in connotations you didn't choose. When a literal phrase exists, use it
 - Technical text: follow these ASD-STE100 rules, not its dictionary. One idea per
 sentence. Active voice. One word for one meaning. Keep product names, code names
 and domain terms as they are; do not replace them with simpler words.
+- Use my words: the words I or the code already use. Add a new term only when
+no existing word works; define it in the same sentence; at most one per answer.
+- Example first: for a behaviour or a design, show one concrete case (a file,
+its rows, what models see) before the general rule.
+- At most one unfamiliar term per sentence (one I haven't seen in this
+conversation).
+- Rename, don't gloss: the glossary is for my terms and domain terms. If a word
+you made up needs a glossary entry, rename it instead.
+- Pages, specs and proposals (not chat answers): before publishing, list every
+noun you introduced and replace or define it. Then a fresh small-model reader
+(Haiku) reads the draft with no context and lists each sentence it could not
+follow and each term it had to guess. Fix those, then publish.
 
 ### Brevity
 - Technical text: "Why use many words when few do trick!" Sentences of 20 words
 or fewer (25 for descriptive text). Cut filler, hedges, restatement and long
 connectives. Keep every fact, number, negation and exception. Never stack jargon
 to save words.
+- Brevity cuts filler, never meaning. Keep "because", "so", "unless", "then".
+"Long connectives" means phrases like "in order to", "due to the fact that".
 - Publication text: no STE and no compression. Write in a natural voice with
 varied sentence length.
 
@@ -181,3 +195,5 @@ change behavior. Adjacent code stays as it is.
 Honorable: Law of Demeter · fail fast / illegal states unrepresentable · optimize for deletion · Unix do-one-thing + compose.
 
 Treat as constraints. Violate slogans when judgment says so.
+
+@RTK.md
