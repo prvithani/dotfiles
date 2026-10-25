@@ -65,7 +65,7 @@ if [ "$win" = "--run" ]; then
             [ -f "$SIDE_PROJECT/sessions/${SIDE_SESSION:-none}/$n.md" ] && echo "$SIDE_PROJECT/sessions/$SIDE_SESSION/$n.md"
             [ -f "$SIDE_PROJECT/$n.md" ] && echo "$SIDE_PROJECT/$n.md"
           done
-          find "$root" -maxdepth 4 -type f \( -path '*/.scratch/*' -o -path '*/.claude/plans/*' \) \
+          find "$root" -maxdepth 6 -type f \( -path '*/.scratch/*' -o -path '*/.claude/plans/*' \) \
                \( -name '*.md' -o -name '*.org' -o -name '*.txt' -o -name '*.edn' \) \
                -not -path '*/node_modules/*' -printf '%T@ %p\n' 2>/dev/null | sort -rn | cut -d' ' -f2-
         } | sed "s|^$root/||; s|^$HOME/|~/|"
