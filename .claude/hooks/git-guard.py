@@ -2,13 +2,16 @@
 """PreToolUse guard for Bash: enforces git/glab/ssh-add/system-dir rules.
 
 deny  -> Claude must fix the command (message format, staging, MR flag, ssh-add).
-ask   -> the user decides (any push, a commit on master/main, writes to /usr/local/lib).
+ask   -> the user decides (any push, a commit on master/main, writes to /usr/local/lib,
+         a commit that grows src without being a feat, or is mostly comments).
 Run with --test for the self-test.
 """
 import json, os, re, shlex, subprocess, sys
 
 PROTECTED = {"master", "main"}
 TITLE_MAX, BODY_MAX = 60, 80
+PROSE_SHARE_MAX, PROSE_MIN_ADDED = 0.25, 10
+CODE_EXT = (".clj", ".cljc", ".cljs", ".py", ".sh", ".js", ".ts", ".java", ".c", ".cpp", ".h", ".hpp", ".rs", ".sql")
 CLAUDE_LINE = re.compile(r"co-authored-by:.*claude|generated (with|by) \[?claude", re.I)
 HEREDOC = re.compile(r"<<-?\s*(['\"]?)(\w+)\1[^\n]*\n(.*?)\n\s*\2\s*(?:\n|$)", re.S)
 
@@ -94,9 +97,82 @@ def message_problems(msg):
     return probs
 
 
+def kind(path):
+    """test, src or docs: the part of a change a file's lines count in."""
+    p = "/" + path
+    if re.search(r"/tests?/|_test\.\w+$|\.test\.\w+$", p):
+        return "test"
+    return "src" if p.endswith(CODE_EXT) or "/bin/" in p else "docs"
+
+
+def prose_lines(added):
+    """How many of a file's added lines are comments or docstring text."""
+    n, in_doc = 0, False
+    for line in added:
+        s = line.strip()
+        odd = len(re.findall(r'(?<!\\)"', s)) % 2
+        if in_doc:
+            n += 1
+            in_doc = not odd
+        elif re.match(r"(;|#(\s|$)|//|/\*|\*(\s|$))", s):
+            n += 1
+        elif s.startswith('"') and odd:  # a docstring that runs on
+            n += 1
+            in_doc = True
+    return n
+
+
+def change_size(gd, amend, paths):
+    """({kind: [added, deleted]}, prose lines added to src) of the commit about
+    to be made: what is staged, plus `paths` the same command stages first."""
+    base = "HEAD~1" if amend else "HEAD"
+
+    def diff(*a):
+        return subprocess.run(["git", "-C", gd, "diff", "-U0", "--no-color", *a],
+                              capture_output=True, text=True, timeout=10).stdout
+    text = diff("--cached", base, "--", ".", *[":(exclude)" + p for p in paths])
+    for p in paths:
+        tracked = subprocess.run(["git", "-C", gd, "ls-files", "--error-unmatch", p],
+                                 capture_output=True).returncode == 0
+        if tracked:
+            text += diff(base, "--", p)
+        elif os.path.isfile(os.path.join(gd, p)):  # new: every line is added
+            text += f"diff --git a/{p} b/{p}\n+++ b/{p}\n" + "".join(
+                "+" + line for line in open(os.path.join(gd, p), errors="replace").read().splitlines(True))
+    size, prose, f, added = {}, 0, None, []
+    for line in text.splitlines() + ["diff --git end"]:
+        if line.startswith("diff --git"):
+            if f and kind(f) == "src":
+                prose += prose_lines(added)
+            f, added = None, []
+        elif line.startswith(("--- a/", "+++ b/")):
+            f = line[6:]
+        elif line.startswith(("---", "+++")):
+            continue
+        elif f and line[:1] in "+-" and line:
+            size.setdefault(kind(f), [0, 0])[line[0] == "-"] += 1
+            if line[0] == "+":
+                added.append(line[1:])
+    return size, prose
+
+
+def size_problem(size, prose, title):
+    """Why a commit of `size` should be shown to the user first, or None. A feat
+    may grow src; anything else that grows it, and any commit whose added src
+    is mostly comments and docstrings, needs a reason."""
+    a, d = size.get("src", [0, 0])
+    why = []
+    if a > d and not title.startswith("feat"):
+        why.append(f"src +{a - d}, not a feat")
+    if a >= PROSE_MIN_ADDED and prose / a > PROSE_SHARE_MAX:
+        why.append(f"{prose}/{a} added src lines are prose")
+    return f"{'; '.join(why)}: why?" if why else None
+
+
 def check(cmd, cwd):
     cmd = cmd.replace("\\\n", " ")  # join line continuations
     deny, ask = [], []
+    commits, adds = [], {}
     d = cwd
     for words in segments(cmd):
         if words[0] == "cd" and len(words) > 1:
@@ -114,7 +190,10 @@ def check(cmd, cwd):
                         deny.append(f"`git add {a}`: plans in .claude/plans are never committed")
                     elif not a.startswith("-") and os.path.isdir(os.path.join(gd, a)):
                         deny.append(f"`git add {a}` adds a directory; stage explicit paths")
+                    elif not a.startswith("-"):
+                        adds.setdefault(gd, []).append(a)
             elif sub == "commit":
+                commits.append((gd, "--amend" in args))
                 if any(a == "--all" or re.match(r"^-[a-zA-Z]*a[a-zA-Z]*$", a) for a in args):
                     deny.append("`git commit -a` stages every tracked change; stage explicit paths")
                 if branch(gd) in PROTECTED:
@@ -140,8 +219,14 @@ def check(cmd, cwd):
             ask.append("tee into /usr/local/lib")
     if re.search(r">\s*/usr/local/lib", cmd):
         ask.append("redirect into /usr/local/lib")
-    for msg in commit_messages(cmd, d):
+    msgs = commit_messages(cmd, d)
+    for msg in msgs:
         deny += message_problems(msg)
+    title = msgs[0].strip().split("\n", 1)[0] if msgs else ""
+    for gd, amend in commits:
+        p = size_problem(*change_size(gd, amend, adds.get(gd, [])), title)
+        if p:
+            ask.append(p)
     return deny, ask
 
 
@@ -166,6 +251,16 @@ def test():
     feat = tempfile.mkdtemp()
     subprocess.run(["git", "init", "-q", "-b", "feat", feat], check=True)
     ok_msg = "git commit -q -F - <<'EOF'\nfix: short title\n\nBody line.\nEOF"
+    grow = tempfile.mkdtemp()
+    subprocess.run(["git", "init", "-q", "-b", "grow", grow], check=True)
+    for p, body in [("src/a.clj", "(ns a)\n"), ("src/b.clj", "(ns b)\n" + "(def x 1)\n" * 12),
+                    ("src/c.clj", '(ns c)\n(defn f\n  "' + "Says what f does.\n" * 11 + '"\n  [])\n'),
+                    ("test/a_test.clj", "(ns a-test)\n" + "(is true)\n" * 20)]:
+        os.makedirs(os.path.join(grow, os.path.dirname(p)), exist_ok=True)
+        open(os.path.join(grow, p), "w").write(body)
+    subprocess.run(["git", "-C", grow, "add", "src/a.clj"], check=True)
+    subprocess.run(["git", "-C", grow, "-c", "user.name=t", "-c", "user.email=t@t", "commit", "-qm", "init"], check=True)
+    open(os.path.join(grow, "src/a.clj"), "w").write("(ns a)\n" + "(def y 2)\n" * 12)
     cases = [
         # (command, cwd, expected decision)
         (f"cd {feat} && git add src/a.clj b.clj", "/", None),
@@ -194,6 +289,12 @@ def test():
         ("ln -sf /usr/local/lib/libdaffy.so /root/.local/x.so", "/", None),
         ("LD_LIBRARY_PATH=/usr/local/lib clj -M:dev -e nil", "/", None),
         ("echo hi > /usr/local/lib/x", "/", "ask"),
+        # line budget: the files are staged by the same command
+        (f"cd {grow} && git add src/a.clj && git commit -m 'fix: grow a'", "/", "ask"),
+        (f"cd {grow} && git add src/b.clj && git commit -m 'feat: add b'", "/", None),
+        (f"cd {grow} && git add src/b.clj && git commit -m 'refactor: add b'", "/", "ask"),
+        (f"cd {grow} && git add src/c.clj && git commit -m 'feat: add c'", "/", "ask"),
+        (f"cd {grow} && git add test/a_test.clj && git commit -m 'test: cover a'", "/", None),
     ]
     bad = 0
     for cmd, cwd, want in cases:
