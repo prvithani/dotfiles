@@ -60,7 +60,8 @@ an invariant, or behavior a test pins.
 ## Scope discipline
 - Touch only what the task requires. Don't refactor, reformat, or "improve"
 adjacent code; don't revert or modify unrelated changes (if something seems
-wrong, surface it, don't touch it).
+wrong, surface it, don't touch it). Deleting in the code you touch is in
+scope (see Deletion first).
 - Confirm which file/namespace to modify before editing when a fix could live in
 several places; verify namespace dependency direction (no backwards deps)
 before moving code.
@@ -72,6 +73,20 @@ don't blend them.
 - Prefer my existing vocabulary. When the goal is simplification, add no new
 named concepts, abstraction layers, or bridging types; propose the smallest
 change first and escalate only if I ask.
+
+## Deletion first
+- KEEP NO DEAD CODE. New functions beside old ones are fine; the old ones go
+in the same change.
+- Before adding a line, find one to delete in the code you touch: dead code,
+a comment your change makes stale or repeats, a second copy of a fact.
+- A fact said in two places is a duplicate. Keep one; the other points to it.
+"Keep every fact" means don't lose a fact, not don't delete a copy.
+- A comment or docstring describes the code as it is now, in 3 lines or
+fewer, saying what the name and args don't. No restating the code. No
+history: what it was before, what changed and why goes in the commit message.
+- A net-positive src delta for a fix or refactor needs one line saying why.
+The diff shows the delta; don't describe it.
+- A review lens asks "what can be deleted" as well as "what is wrong".
 
 ## Mechanism vs policy
 Infra provides generic mechanism (the knobs); applications set policy (the
@@ -167,8 +182,8 @@ follow and each term it had to guess. Fix those, then publish.
 ### Brevity
 - Technical text: "Why use many words when few do trick!" Sentences of 20 words
 or fewer (25 for descriptive text). Cut filler, hedges, restatement and long
-connectives. Keep every fact, number, negation and exception. Never stack jargon
-to save words.
+connectives. Keep every fact, number, negation and exception (once: a copy
+of a fact said elsewhere is restatement). Never stack jargon to save words.
 - Brevity cuts filler, never meaning. Keep "because", "so", "unless", "then".
 "Long connectives" means phrases like "in order to", "due to the fact that".
 - Publication text: no STE and no compression. Write in a natural voice with
