@@ -1,7 +1,7 @@
 # .claude/skills/branch-review/SKILL.md
 ---
 name: branch-review
-description: Thorough branch-vs-master review across eight lenses
+description: Thorough branch-vs-master review across nine lenses
 ---
 Dispatch parallel reviewer subagents against `git diff master...HEAD`, one per lens:
 1. Correctness & edge cases
@@ -12,6 +12,14 @@ Dispatch parallel reviewer subagents against `git diff master...HEAD`, one per l
 6. Complexity & maintainability (invoke the `complexity-analyzer` skill over the diff; use its findings table verbatim)
 7. Docs/spec drift
 8. Design: mechanism vs policy ("if a second user appeared, would I have to refactor?"), separation of concerns and dependency direction, encapsulation, one representation per piece of knowledge, seams with a single user (YAGNI), illegal states / fail fast, outward-facing extension-point changes, vocabulary (one word, one meaning), and conformance to the approved spec and plan (deviations recorded?)
+9. Deletion: what the diff can lose. Invoke the `ponytail-review` skill over the
+   diff for the code side (its lines verbatim, with its `net:` line). Then add,
+   per the "Deletion first" rules in CLAUDE.md: dead code and functions the change
+   stopped calling; a fact said in two places, in code or prose (name the place
+   that keeps it); comments that tell history; docstrings over 3 lines or that
+   restate the code; tests that cannot fail when the business logic changes.
+   Each finding: lines to cut, what keeps the fact (or nothing). End with the
+   net line count possible.
 
 Rules:
 - Every finding MUST cite file:line and include a repro or measurement. No unverified root causes.
