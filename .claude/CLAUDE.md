@@ -117,6 +117,8 @@ Before a background job/benchmark/subagent that runs >~2 min, post a short statu
 line (what's running, why, expected duration, what you'll do with the result);
 post another when it returns. Don't let status sit buried between tool calls. If a
 run exceeds its expected duration, say so.
+- Run such a job so I can watch it live: full output to a file, followed with
+Monitor. Never pipe it through `tail`, which shows nothing until the job ends.
 
 ## Deliverables
 Drafts, findings and reports go to a file or ticket; chat gets the summary and
