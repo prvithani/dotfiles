@@ -81,9 +81,14 @@ in the same change.
 a comment your change makes stale or repeats, a second copy of a fact.
 - A fact said in two places is a duplicate. Keep one; the other points to it.
 "Keep every fact" means don't lose a fact, not don't delete a copy.
-- A comment or docstring describes the code as it is now, in 3 lines or
-fewer, saying what the name and args don't. No restating the code. No
+- A comment or docstring states the objective and the reasoning behind the
+decisions taken, and no more. It describes how the code works only when the
+logic is complex. No restating the code; no copy of a why kept elsewhere. No
 history: what it was before, what changed and why goes in the commit message.
+- Describe a param or opt only when its name leaves out what a caller needs:
+its shape, what nil or a default means, allowed values, units. An entry point
+(exec-fn, RPC, extension point) lists its keys. A schema that defines the
+shape is pointed to, not restated.
 - A net-positive src delta for a fix or refactor needs one line saying why.
 The diff shows the delta; don't describe it.
 - A review lens asks "what can be deleted" as well as "what is wrong".

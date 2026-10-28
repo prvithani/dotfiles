@@ -16,8 +16,10 @@ Dispatch parallel reviewer subagents against `git diff master...HEAD`, one per l
    diff for the code side (its lines verbatim, with its `net:` line). Then add,
    per the "Deletion first" rules in CLAUDE.md: dead code and functions the change
    stopped calling; a fact said in two places, in code or prose (name the place
-   that keeps it); comments that tell history; docstrings over 3 lines or that
-   restate the code; tests that cannot fail when the business logic changes.
+   that keeps it); comments that tell history; docstrings holding more than
+   the objective and the reasoning behind decisions (how the code works only
+   when the logic is complex), or restating the code, while a why found
+   nowhere else stays; tests that cannot fail when the business logic changes.
    Each finding: lines to cut, what keeps the fact (or nothing). End with the
    net line count possible.
 
